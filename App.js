@@ -4,22 +4,19 @@ import AuthTab from './stacks/AuthTab';
 import LoggedTab from './stacks/LoggedTab';
 import { PaperProvider } from 'react-native-paper';
 import getFromStorage from './storage/getFromStorage';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import AuthContext from './AuthContext';
 
 
 function App() {
 
   const [logged, setLogged] = React.useState(false);
-  console.log(logged);
+  // console.log(logged);
 
-  React.useEffect(() => {
-    getFromStorage('user').then((user) => {
-      if (user !== null) {
-        setLogged(true);
-      }
-    });
-  }, []);
+  getFromStorage('user').then((user) => {
+    if (user !== null) {
+      setLogged(true);
+    }
+  });
 
 
   return (
