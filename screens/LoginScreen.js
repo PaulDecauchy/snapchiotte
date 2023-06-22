@@ -1,19 +1,41 @@
 import * as React from "react";
 import { View } from "react-native";
 import { TextInput, Button, Text, Dialog, Portal } from 'react-native-paper';
+import getFromStorage from "../storage/getFromStorage";
+import putInStorage from "../storage/putInStorage";
+import { CommonActions } from '@react-navigation/native';
+import AuthContext from "../AuthContext";
 // import "../styles.css";
 
-function LoginScreen({ navigation }) {
-    const [email, setEmail] = React.useState("");
-    const [password, setPassword] = React.useState("");
+function LoginScreen({ navigation, route}) {
+    const { setLogged } = React.useContext(AuthContext);
+    const userInfo = route.params?.userInfo || { email: "", password: "" };
+    const [email, setEmail] = React.useState(userInfo.email);
+    const [password, setPassword] = React.useState(userInfo.password);
     const [error, setError] = React.useState("");
     const [errorEmail, setErrorEmail] = React.useState(false);
     const [errorPassword, setErrorPassword] = React.useState(false);
     const [visible, setVisible] = React.useState(false);
     const [loading, setLoading] = React.useState(false);
+    React.useEffect(() => {
+        if (userInfo.email.length != 0) {
+        setEmail(userInfo.email);
+        setPassword(userInfo.password);
+        }
+    }, [userInfo]);
 
-    const hideDialog = () => setVisible(false);
-
+    const hideDialog = () => {
+        setVisible(false);
+        setLoading(false);
+    };
+    const resetNavigation = () => {
+        navigation.dispatch(
+          CommonActions.reset({
+            index: 0,
+            routes: [{ name: 'Register' }], // Replace 'Home' with the initial screen name of your app
+          })
+        );
+      };
     function handlePress(e) {
         
         e.preventDefault();
@@ -33,9 +55,10 @@ function LoginScreen({ navigation }) {
             email,
             password,
         };
-
+        console.log(data);
+        setLoading(true);
         fetch('https://mysnapchat.epidoc.eu/user', {
-            method: 'POST',
+            method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
             },
@@ -45,19 +68,27 @@ function LoginScreen({ navigation }) {
                 if (response.status === 200) {
                     return response.json();
                 } else {
-                    setVisible(true);
-                    setError('Request failed with status ' + response.status);
-                    throw new Error('Request failed with status ' + response.status);
+                    // setVisible(true);
+                   setLoading(false);
+                    throw response.json();
                 }
             })
-            .then((data) => {
-                console.log(data);
-                data.logged = true;
-                setUser(data);
-                navigate(`/profile/${data.login}`);
+            .then((json) => {
+                console.log(json);
+                getFromStorage("user").then((user) => {
+                    if (!user) {
+                        putInStorage("user", JSON.stringify(json.data));
+                        setLoading(false);
+                        setLogged(true);
+                    }
+                });
             })
-            .catch((error) => {
-                console.error(error);
+            .catch((err) => {
+                err.then((error) => {
+                setError(error.data);
+                    setVisible(true);
+                    console.error(error);
+                });
             });
     }
     return (
@@ -88,7 +119,7 @@ function LoginScreen({ navigation }) {
             <Portal>
                 <Dialog visible={visible} onDismiss={hideDialog}>
                     <Dialog.Content>
-                        <Text variant="bodyMedium" style={{color: "rgb(186, 26, 26)"}}>test</Text>
+                        <Text variant="bodyMedium" style={{color: "rgb(186, 26, 26)"}}>{error}</Text>
                     </Dialog.Content>
                 </Dialog>
             </Portal>
@@ -101,7 +132,7 @@ function LoginScreen({ navigation }) {
                 buttonColor="blue"
                 rippleColor="gray"
                 onPress={(e) => handlePress(e)}>
-                Press me
+                Login
             </Button>
         </View>
     );

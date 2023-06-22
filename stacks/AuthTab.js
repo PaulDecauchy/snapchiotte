@@ -30,7 +30,7 @@ function AuthTab() {
       <Tab.Screen
         name="Login"
         component={LoginScreen}
-        options={{ tabBarBadge: 3 }} />
+        options={{ tabBarBadge: 0 }} />
       <Tab.Screen
         name="Register"
         component={RegisterScreen}
