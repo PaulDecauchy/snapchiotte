@@ -28,14 +28,7 @@ function LoginScreen({ navigation, route}) {
         setVisible(false);
         setLoading(false);
     };
-    const resetNavigation = () => {
-        navigation.dispatch(
-          CommonActions.reset({
-            index: 0,
-            routes: [{ name: 'Register' }], // Replace 'Home' with the initial screen name of your app
-          })
-        );
-      };
+   
     function handlePress(e) {
         
         e.preventDefault();

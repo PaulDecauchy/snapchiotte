@@ -8,7 +8,7 @@ import AuthContext from "../AuthContext";
 // import "../styles.css";
 
 function LoggedUser({ navigation, route }) {
-    const { setLogged } = React.useContext(AuthContext);
+    const { logout } = React.useContext(AuthContext);
     const [visible, setVisible] = React.useState(false);
 
 
@@ -19,17 +19,7 @@ function LoggedUser({ navigation, route }) {
     function handlePress(e) {
 
         e.preventDefault();
-        setLoading(false);
-        setErrorEmail(false);
-        setErrorPassword(false);
-        if (email.length === 0) {
-            setErrorEmail(true);
-            return;
-        }
-        if (password.length === 0) {
-            setErrorPassword(true);
-            return;
-        }
+       
 
         console.log(data);
         setLoading(true);
@@ -70,35 +60,14 @@ function LoggedUser({ navigation, route }) {
     return (
         <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
             {/* <Login /> */}
-            <TextInput
-                id="email"
-                style={{ minWidth: "50%", maxWidth: "80%" }}
-                label="Email"
-                mode="outlined"
-                activeOutlineColor="blue"
-                value=""
-                error={false}
-                onChangeText={email => setEmail(email)}
-            />
-            <TextInput
-                id="password"
-                style={{ minWidth: "50%", maxWidth: "80%", marginTop: "2%" }}
-                label="Password"
-                mode="outlined"
-                value=""
-                activeOutlineColor="blue"
-                secureTextEntry={true}
-                error={false}
-                onChangeText={password => setPassword(password)}
-                right={<TextInput.Icon icon="eye" />}
-            />
+            
             <Portal>
                 <Dialog visible={visible} onDismiss={hideDialog}>
                     <Dialog.Content>
                         <Text variant="bodyMedium" style={{ color: "rgb(186, 26, 26)" }}>{"lol"}</Text>
                     </Dialog.Content>
                     <Dialog.Actions>
-                        <Button onPress={() => console.log('Cancel')}>Cancel</Button>
+                        <Button onPress={() => setVisible(false)}>Cancel</Button>
                         <Button onPress={() => console.log('Ok')}>Ok</Button>
                     </Dialog.Actions>
                 </Dialog>
@@ -106,13 +75,32 @@ function LoggedUser({ navigation, route }) {
             <Button
                 style={{ minWidth: "20%", marginTop: "3%" }}
                 type="contained"
-                loading="false"
-                icon="login"
+                icon="arrow-right"
                 mode="contained"
                 buttonColor="blue"
                 rippleColor="gray"
-                onPress={(e) => handlePress(e)}>
-                Login
+                onPress={() => navigation.navigate("Settings")}>
+                Modifier
+            </Button>
+            <Button
+                style={{ minWidth: "20%", marginTop: "3%" }}
+                type="contained"
+                icon="logout"
+                mode="contained"
+                buttonColor="black"
+                rippleColor="gray"
+                onPress={() => logout()}>
+                Logout
+            </Button>
+            <Button
+                style={{ minWidth: "20%", marginTop: "3%" }}
+                type="contained"
+                icon="delete"
+                mode="contained"
+                buttonColor="red"
+                rippleColor="gray"
+                onPress={() => setVisible(true)}>
+                Supprimer
             </Button>
         </View>
     );

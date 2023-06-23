@@ -4,6 +4,7 @@ import LoginScreen from '../screens/LoginScreen';
 import RegisterScreen from '../screens/RegisterScreen';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import ProfileStack from './ProfileStack';
+import ReceiveStack from './ReceiveStack';
 
 const Tab = createBottomTabNavigator();
 
@@ -31,9 +32,10 @@ function LoggedTab() {
         tabBarInactiveTintColor: 'gray',
       })}>
       <Tab.Screen
+      options={{headerShown: false, tabBarBadge: 0}}
         name="Mes snaps"
-        component={LoginScreen}
-        options={{ tabBarBadge: 8 }} />
+        component={ReceiveStack}
+      />
       <Tab.Screen
         name="Envoyer"
         component={RegisterScreen}
