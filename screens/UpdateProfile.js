@@ -3,7 +3,7 @@ import { View } from 'react-native';
 import { TextInput, Button, Text, Dialog, Portal } from 'react-native-paper';
 import putInStorage from '../storage/putInStorage';
 
-function RegisterScreen({ navigation }) {
+function UpdateProfile({ navigation }) {
   const [login, setLogin] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [email, setEmail] = React.useState("");
@@ -127,5 +127,5 @@ function RegisterScreen({ navigation }) {
   );
 }
 
-export default RegisterScreen;
+export default UpdateProfile;
 // ... other code from the previous section
