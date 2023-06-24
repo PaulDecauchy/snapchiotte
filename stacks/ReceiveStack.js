@@ -2,6 +2,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import UpdateProfile from '../screens/UpdateProfile';
 import SnapScreen from '../screens/SnapScreen';
 import SeeSnap from '../screens/SeeSnap';
+import UserList from '../screens/UserList';
 
 
 const Stack = createNativeStackNavigator();
@@ -11,6 +12,7 @@ function ReceiveStack() {
     <Stack.Navigator>
       <Stack.Screen name="Messages" component={SnapScreen} />
       <Stack.Screen name="Snap" component={SeeSnap} />
+      <Stack.Screen name="UserList" component={UserList}/>
     </Stack.Navigator>
   );
 }

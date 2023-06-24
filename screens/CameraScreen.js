@@ -1,13 +1,12 @@
 import React, { useState, useEffect, useRef} from 'react';
 import { StyleSheet, Button, Image, View, Platform, SafeAreaView, Text} from 'react-native';
-import * as ImagePicker from 'expo-image-picker';
 import { shareAsync } from 'expo-sharing';
 import { Camera } from 'expo-camera';
 import * as MediaLibrary from 'expo-media-library';
 import { StatusBar } from 'expo-status-bar';
+import putInStorage from "../storage/putInStorage";
 
-
-export default function Snap() {
+export default function Snap({ navigation, route }) {
 
   const cameraRef = useRef();
   const [hasCameraPermission, setHasCameraPermission] = useState();
@@ -56,23 +55,25 @@ export default function Snap() {
 
   if (photo) {
     let sharePic = () => {
-      shareAsync(photo.uri).then(() => {
-        setPhoto(undefined);
-      })
+        putInStorage("photo", photo.base64);
+        navigation.navigate('UserList', { photo: photo.base64 });
     };
     return(
       <SafeAreaView style={camStyle.container}>
         <Image  style={camStyle.preview} source={{uri :"data:image/jpg;base64," +photo.base64}}/>
+        <Button title="Take Pic" onPress={takePic} />
+        <Button title="Share" onPress={sharePic} />
+        <Button title="Discard" onPress={() => setPhoto(undefined)} />
       </SafeAreaView>
     );
   }
 
-    return (
-      <Camera style={camStyle.container} ref={cameraRef}>
-        <View style={camStyle.buttonContainer}>
-          <Button title="Take Pic" onPress={takePic} />
-        </View>
-        <StatusBar style="auto" />
-      </Camera>
-    );
+  return (
+    <Camera style={camStyle.container} ref={cameraRef}>
+      <View style={camStyle.buttonContainer}>
+        <Button title="Take Pic" onPress={takePic} />
+      </View>
+      <StatusBar style="auto" />
+    </Camera>
+  );
 }

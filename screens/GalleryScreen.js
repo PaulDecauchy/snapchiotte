@@ -4,7 +4,7 @@ import * as ImagePicker from 'expo-image-picker';
 
 
 
-export default function  Gallery() {
+export default function  Gallery({ navigation, route }) {
     const [image, setImage] = useState(null);
 
     const pickImage = async () => {
