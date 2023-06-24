@@ -1,10 +1,9 @@
 import * as React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import LoginScreen from '../screens/LoginScreen';
-import RegisterScreen from '../screens/RegisterScreen';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import ProfileStack from './ProfileStack';
 import ReceiveStack from './ReceiveStack';
+import SnapStack from './SnapStack';
 
 const Tab = createBottomTabNavigator();
 
@@ -38,7 +37,7 @@ function LoggedTab() {
       />
       <Tab.Screen
         name="Envoyer"
-        component={RegisterScreen}
+        component={SnapStack}
       />
       <Tab.Screen
         options={{headerShown: false}}

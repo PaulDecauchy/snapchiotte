@@ -3,8 +3,6 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import LoginScreen from '../screens/LoginScreen';
 import RegisterScreen from '../screens/RegisterScreen';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import CameraScreen from '../screens/CameraScreen';
-import GalleryScreen from '../screens/GalleryScreen';
 
 const Tab = createBottomTabNavigator();
 
@@ -36,14 +34,6 @@ function AuthTab() {
       <Tab.Screen
         name="Register"
         component={RegisterScreen}
-      />
-      <Tab.Screen
-        name="Camera"
-        component={CameraScreen}
-      />
-       <Tab.Screen
-        name="Gallery"
-        component={GalleryScreen}
       />
     </Tab.Navigator>
   );
