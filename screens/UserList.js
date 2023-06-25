@@ -15,7 +15,6 @@ export default function UserList({ navigation, route }) {
   const [isSent, setIsSent] = useState(false);
   const [duration, setDuration] = useState(5); // Default duration value of 5 seconds
 
-console.log(me);
 
   function getUsers() {
     getFromStorage("user").then((loggedUser) => {
