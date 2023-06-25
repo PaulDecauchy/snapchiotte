@@ -7,6 +7,7 @@ import AuthContext from "../AuthContext";
 import User from "../components/User"
 
 export default function UserList({ navigation, route }) {
+    const photo = route.params;
     const [isLoading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [users, setUsers] = useState([]);
@@ -14,7 +15,7 @@ export default function UserList({ navigation, route }) {
     
     function getUsers() {
         getFromStorage("user").then((loggedUser) => {
-            fetch('https://mysnapchat.epidoc.eu/user', {
+            fetch('https://mysnapchat.epidoc.eu/user/' + JSON.parse(loggedUser)._id, {
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization' : `Bearer ${JSON.parse(loggedUser).token}`
@@ -28,8 +29,8 @@ export default function UserList({ navigation, route }) {
                     throw response.json();
                 } 
             }).then((response) => {
-                console.log(response.data.slice(0, 5));
-                setUsers(response.data.slice(0, 5));
+                console.log(response.data.slice(0, 100));
+                setUsers(response.data.slice(0, 100));
                 setLoading(false);
             })
             .catch((err) => {
@@ -102,7 +103,7 @@ export default function UserList({ navigation, route }) {
     } else {
         return(
             <View>
-                <Text>{JSON.stringify(users[0]?.username)}</Text>
+                <Text>Utilisateurs</Text>
                 <FlatList 
                     data={users}
                     renderItem={({item}) => <User user={item} onUserClicked={handlePress}></User>}
