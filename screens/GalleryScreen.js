@@ -29,7 +29,7 @@ export default function Gallery({ navigation, route }) {
       aspect: [4, 3],
       quality: 1,
     });
-    if (!result.cancelled) {
+    if (!result.canceled) {
       console.log(result);
       const base64 = await FileSystem.readAsStringAsync(result.assets[0].uri, { encoding: 'base64' });
       setImage(base64);
@@ -52,6 +52,7 @@ const sharePic = () => {
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
       <Button title="Pick from Gallery" onPress={pickImage} color="purple" />
+      <Button title="Take from Camera" onPress={() => navigation.navigate("Take a photo")} color="purple" />
       {image && <Image source={{ uri: `data:image/jpeg;base64,${image}` }} style={{ width: 200, height: 200 }} />}
       {image && (
         <SafeAreaView>

@@ -12,7 +12,7 @@ function ReceiveStack() {
     <Stack.Navigator>
       <Stack.Screen name="Messages" component={SnapScreen} />
       <Stack.Screen name="Snap" component={SeeSnap} />
-      <Stack.Screen name="UserList" component={UserList}/>
+      
     </Stack.Navigator>
   );
 }

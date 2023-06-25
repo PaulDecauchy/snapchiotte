@@ -1,9 +1,10 @@
 import * as React from 'react';
-import { View } from 'react-native';
+import { Platform, View } from 'react-native';
 import { TextInput, Button, Text, Dialog, Portal, TouchableRipple, Avatar } from 'react-native-paper';
 import * as ImagePicker from 'expo-image-picker';
 import putInStorage from '../storage/putInStorage';
 import getFromStorage from '../storage/getFromStorage';
+import * as FileSystem from 'expo-file-system';
 
 function UpdateProfile({ navigation }) {
   const [login, setLogin] = React.useState("");
@@ -35,6 +36,7 @@ function UpdateProfile({ navigation }) {
     };
 
     fetchUser();
+    console.log(user);
   }, []);
 
   const selectImage = async () => {
@@ -47,17 +49,20 @@ function UpdateProfile({ navigation }) {
     });
 
     // console.log(result);
-    // console.log(result.assets[0].uri);
+    console.log(result.assets[0].uri);
 
     if (!result.canceled) {
       
-      setImage(result.assets[0].uri);
+      let uri = result.assets[0].uri;
+
+      console.log(uri);
+      setImage(uri);
     }
   };
 
   const hideDialog = () => setVisible(false);
 
-  function handlePress(e) {
+  async function handlePress(e) {
     e.preventDefault();
     setErrorEmail(false);
     setErrorLogin(false);
@@ -75,13 +80,30 @@ function UpdateProfile({ navigation }) {
       setErrorLogin(true);
       return;
     }
+    
 
-    const data = {
-      email,
-      username: login,
-      password,
-      profilePicture: image,
-    };
+    let base64Image = '';
+  if (Platform.OS === 'web') {
+    base64Image = image;
+  } else {
+    try {
+      const imageBase64 = await FileSystem.readAsStringAsync(image, {
+        encoding: FileSystem.EncodingType.Base64,
+      });
+      base64Image = `data:image/jpeg;base64,${imageBase64}`;
+    } catch (error) {
+      console.error('Error reading image file:', error);
+      return;
+    }
+  }
+
+  const data = {
+    email,
+    username: login,
+    password,
+    profilePicture: base64Image,
+  };
+    console.log(data);
     fetch("https://mysnapchat.epidoc.eu/user", {
       method: 'PATCH',
       headers: {

@@ -8,8 +8,15 @@ import SnapStack from './SnapStack';
 const Tab = createBottomTabNavigator();
 
 function LoggedTab() {
+
+  const [notif, setNotif] = React.useState(0);
+
+  const updateNotificationCount = (count) => {
+    setNotif(count);
+  };
   return (
     <Tab.Navigator
+    
       screenOptions={({ route }) => ({
         tabBarIcon: ({ focused, color, size }) => {
           let iconName;
@@ -31,16 +38,17 @@ function LoggedTab() {
         tabBarInactiveTintColor: 'gray',
       })}>
       <Tab.Screen
-      options={{headerShown: false, tabBarBadge: 0}}
+      options={{headerShown: false,  tabBarBadge: notif > 0 ? notif : null,}}
         name="Mes snaps"
-        component={ReceiveStack}
+        children={() => <ReceiveStack updateNotificationCount={updateNotificationCount} />}
       />
       <Tab.Screen
+       options={{headerShown: false}}
         name="Envoyer"
         component={SnapStack}
       />
       <Tab.Screen
-        options={{headerShown: false}}
+        // options={{headerShown: false}}
         name="Profile"
         component={ProfileStack}
       />
