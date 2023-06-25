@@ -8,7 +8,7 @@ import * as FileSystem from 'expo-file-system';
 
 export default function Snap({ navigation, route }) {
 
-  const cameraRef = useRef();
+  const cameraRef = useRef(null);
   const [hasCameraPermission, setHasCameraPermission] = useState();
   const [hasMediaLibraryPermission, setHasMediaLibraryPermission] = useState();
   const [image, setImage] = useState(null);
@@ -49,19 +49,19 @@ export default function Snap({ navigation, route }) {
       base64: true,
       exif: false
     };
-    let newPhoto = await cameraRef.current.takePictureAsync(options);
+    let newPhoto = await cameraRef.current?.takePictureAsync(options);
+    console.log(newPhoto?.base64.slice(0, 100));
     setPhoto(newPhoto);
   };
 
   if (photo) {
     let sharePic = () => {
-        putInStorage("photo", photo.base64);
         navigation.navigate('UserList', { photo: photo.base64 });
     };
     return(
       <SafeAreaView style={camStyle.container}>
         <Image  style={camStyle.preview} source={{uri :"data:image/jpg;base64," +photo.base64}}/>
-        <Button title="Take Pic" onPress={takePic} />
+        {/* <Button title="Take Pic" onPress={takePic} disabled={true}/> */}
         <Button title="Share" onPress={sharePic} />
         <Button title="Discard" onPress={() => setPhoto(undefined)} />
       </SafeAreaView>
