@@ -1,18 +1,59 @@
 import * as React from 'react';
 import { View } from 'react-native';
-import { TextInput, Button, Text, Dialog, Portal } from 'react-native-paper';
+import { TextInput, Button, Text, Dialog, Portal, TouchableRipple, Avatar } from 'react-native-paper';
+import * as ImagePicker from 'expo-image-picker';
 import putInStorage from '../storage/putInStorage';
+import getFromStorage from '../storage/getFromStorage';
 
 function UpdateProfile({ navigation }) {
   const [login, setLogin] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [email, setEmail] = React.useState("");
   const [error, setError] = React.useState("");
+  const [dialog, setDialog] = React.useState("");
   const [errorEmail, setErrorEmail] = React.useState(false);
   const [errorLogin, setErrorLogin] = React.useState(false);
   const [errorPassword, setErrorPassword] = React.useState(false);
   const [visible, setVisible] = React.useState(false);
-  const [loading, setLoading] = React.useState(false);
+  const [image, setImage] = React.useState(false);
+  const [user, setUser] = React.useState({});
+
+  React.useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const user1 = await getFromStorage('user');
+        const json = await JSON.parse(user1);
+        setUser(json);
+        setLogin(json.username);
+        setEmail(json.email);
+        if (json.profilePicture !== "") {
+          setImage(json.profilePicture);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchUser();
+  }, []);
+
+  const selectImage = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+      base64: true
+    });
+
+    // console.log(result);
+    // console.log(result.assets[0].uri);
+
+    if (!result.canceled) {
+      
+      setImage(result.assets[0].uri);
+    }
+  };
 
   const hideDialog = () => setVisible(false);
 
@@ -21,8 +62,6 @@ function UpdateProfile({ navigation }) {
     setErrorEmail(false);
     setErrorLogin(false);
     setErrorPassword(false);
-    setEmail("");
-    setLoading(false);
     if (email.length === 0) {
       setErrorEmail(true);
       return;
@@ -41,12 +80,13 @@ function UpdateProfile({ navigation }) {
       email,
       username: login,
       password,
+      profilePicture: image,
     };
-    setLoading(true);
-    fetch('https://mysnapchat.epidoc.eu/user', {
-      method: 'POST',
+    fetch("https://mysnapchat.epidoc.eu/user", {
+      method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': `Bearer ${user.token}`,
       },
       body: JSON.stringify(data),
     })
@@ -58,24 +98,25 @@ function UpdateProfile({ navigation }) {
         }
       })
       .then((json) => {
-        setLoading(false);
-        console.log(json);
-        navigation.jumpTo('Login', {userInfo : data});
+        putInStorage('user', data);
+        setVisible(true);
+        setDialog("Votre profil a bien été modifié");
       })
-      .catch((err) => {
-        err.then((error) => {
-
-          setLoading(false);
-          setError(error.data);
+      .catch((error) => {
+        error.then((err) => {
+          console.error(err.data);
+          setDialog(err.data);
           setVisible(true);
-          console.error(error.data);
-        });
+        }
+        );
       });
   }
 
   return (
     <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-      {/* <Login /> */}
+      <TouchableRipple onPress={selectImage} rippleColor="rgba(0, 0, 0, .32)">
+        {image ? <Avatar.Image size={100} source={{ uri: image }} /> : <Avatar.Text size={100} label={`${login.slice(0, 1).toUpperCase()}`} />}
+      </TouchableRipple>
       <TextInput
         style={{ minWidth: "50%", maxWidth: "80%" }}
         label="Email"
@@ -108,7 +149,7 @@ function UpdateProfile({ navigation }) {
       <Portal>
         <Dialog visible={visible} onDismiss={hideDialog}>
           <Dialog.Content>
-            <Text variant="bodyMedium" style={{ color: "rgb(186, 26, 26)" }}>{error}</Text>
+            <Text variant="bodyMedium" style={{ color: "rgb(186, 26, 26)" }}>{dialog}</Text>
           </Dialog.Content>
         </Dialog>
       </Portal>
@@ -116,16 +157,15 @@ function UpdateProfile({ navigation }) {
         style={{ minWidth: "20%", marginTop: "3%" }}
         type="contained"
         loading={false}
-        icon="file-sign"
+        icon="cloud-upload-outline"
         mode="contained"
         buttonColor="blue"
         rippleColor="gray"
         onPress={(e) => handlePress(e)}>
-        Register
+        Modifier
       </Button>
     </View>
   );
 }
 
 export default UpdateProfile;
-// ... other code from the previous section
