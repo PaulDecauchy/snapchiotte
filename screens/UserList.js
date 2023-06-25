@@ -14,7 +14,6 @@ export default function UserList({ navigation, route }) {
     
     function getUsers() {
         getFromStorage("user").then((loggedUser) => {
-            console.log(loggedUser);
             fetch('https://mysnapchat.epidoc.eu/user', {
                 headers: {
                     'Content-Type': 'application/json',

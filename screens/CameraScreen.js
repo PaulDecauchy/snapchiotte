@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useRef} from 'react';
 import { StyleSheet, Button, Image, View, Platform, SafeAreaView, Text} from 'react-native';
-import { shareAsync } from 'expo-sharing';
 import { Camera } from 'expo-camera';
 import * as MediaLibrary from 'expo-media-library';
 import { StatusBar } from 'expo-status-bar';
 import putInStorage from "../storage/putInStorage";
+import * as FileSystem from 'expo-file-system';
 
 export default function Snap({ navigation, route }) {
 
