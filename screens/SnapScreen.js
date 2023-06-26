@@ -2,10 +2,14 @@ import * as React from 'react';
 import { View } from 'react-native';
 import { List, TouchableRipple, Divider, Text, ActivityIndicator, Avatar } from 'react-native-paper';
 import getFromStorage from '../storage/getFromStorage';
+import NotificationContext from '../stacks/NotifCOntext';
+import { useIsFocused } from '@react-navigation/native';
 
-function SnapScreen({ navigation, updateNotificationCount }) {
+function SnapScreen({ navigation, route }) {
     const [isLoading, setLoading] = React.useState(true);
+    const { updateNotificationCount } = React.useContext(NotificationContext);
     const [snaps, setSnaps] = React.useState([]);
+    const isFocused = useIsFocused();
 
     const getSnaps = async () => {
         const token = await getFromStorage('user').then((user) => {
@@ -30,6 +34,8 @@ function SnapScreen({ navigation, updateNotificationCount }) {
                     const user = await userInfo(snap.from); // Use a different variable name for user
                     snap.user = user; // Assign the user to the snap object
                 }
+            } else {
+                updateNotificationCount(0);
             }
             setSnaps(json.data);
             setLoading(false);
@@ -63,7 +69,7 @@ function SnapScreen({ navigation, updateNotificationCount }) {
 
     React.useEffect(() => {
         getSnaps();
-    }, []);
+    }, [isFocused]);
 
     async function handlePress(e, snapId) {
         e.preventDefault();
@@ -102,7 +108,7 @@ function SnapScreen({ navigation, updateNotificationCount }) {
                                 <TouchableRipple onPress={(e) => handlePress(e, snap._id)} rippleColor="rgba(0, 0, 0, .32)">
                                     <List.Item
                                         title={snap.user.username}
-                                        description={snap.duration + ' secondes'}
+                                        description={snap.date + ' secondes'}
                                         left={(props) => {
                                             return snap.user.profilePicture ? (
                                                 <Avatar.Image size={100} source={{ uri: snap.user.profilePicture }} />

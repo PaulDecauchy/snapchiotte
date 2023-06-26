@@ -4,6 +4,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import ProfileStack from './ProfileStack';
 import ReceiveStack from './ReceiveStack';
 import SnapStack from './SnapStack';
+import NotificationContext from './NotifCOntext';
 
 const Tab = createBottomTabNavigator();
 
@@ -15,6 +16,9 @@ function LoggedTab() {
     setNotif(count);
   };
   return (
+    <NotificationContext.Provider
+      value={{ notif, updateNotificationCount }}
+    >
     <Tab.Navigator
     
       screenOptions={({ route }) => ({
@@ -53,6 +57,7 @@ function LoggedTab() {
         component={ProfileStack}
       />
     </Tab.Navigator>
+    </NotificationContext.Provider>
   );
 };
 

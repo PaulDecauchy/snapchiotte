@@ -32,7 +32,7 @@ function SeeSnap({ route }) {
     }, 1000);
 
     if (timer === 0) {
-      navigation.goBack();
+      navigation.navigate("Messages");
     }
 
     return () => {
